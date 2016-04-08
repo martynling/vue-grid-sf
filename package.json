@@ -1,0 +1,40 @@
+{
+  "name": "vue-simple-grid",
+  "version": "0.0.0",
+  "description": "Vue.js UI grid component. Define the columns, bind the data and off you go. Column headings are sortable by default, triggering an event.",
+  "main": "./index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martynling/vue-simple-grid.git"
+  },
+  "keywords": [
+    "Vue",
+    "component",
+    "grid",
+    "simple",
+    "sortable",
+    "actions",
+    "events"
+  ],
+  "author": "Martyn Ling",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/martynling/vue-simple-grid/issues"
+  },
+  "dependencies": {
+    "vue": "^1.0.16"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify", { "presets": ["es2015"] }
+      ],
+      [
+        "vueify"
+      ]
+    ]
+  }
+}
