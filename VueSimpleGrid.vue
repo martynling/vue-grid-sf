@@ -121,7 +121,7 @@
 
             getActionUrl(action, rowData) {
                 if (action.url)
-                    return action.url.replace("__id__", rowData[action.urlId])
+                    return action.url.replace("{key}", rowData[action.urlKey])
                 else
                     return '#'
             },

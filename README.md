@@ -47,8 +47,8 @@ var vm = new Vue({
         actions: [
             {
                 displayText: 'URL test',
-                url: '/things/__id__/edit', // for each row __id__ is replaced by the rowData for the urlId column 
-                urlId: 'id'
+                url: '/things/{key}/edit', // for each row, {key} is replaced by the rowData for the urlKey column 
+                urlKey: 'id'
             },{
                 displayText: 'Event test',
                 event: 'my-custom-event'
