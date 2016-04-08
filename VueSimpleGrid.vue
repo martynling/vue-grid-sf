@@ -6,7 +6,7 @@
                    {{ column.displayName }} <span v-if="isSorting(column)" :class="sortingClass(column)"></span>
                </th>
                <th v-if="hasActions">
-                   {{ actionsColumnName }}
+                   {{ actionsColumnHeading }}
                </th>
            </tr>
            <tr v-for="rowData in data" :class="getRowClass(rowData)"  @click="rowClicked(rowData)">
