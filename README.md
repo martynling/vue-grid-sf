@@ -36,6 +36,7 @@ After installing the plugin you can use it like this
         :sort-column.sync="sortColumnName"
         :sort-dir.sync="sortDir"
         :actions="actions"
+        actions-column-heading="Actions"
 ></vue-simple-grid>
 ```
 
