@@ -61,7 +61,9 @@
             actionsColumnHeading: {
                 default: ''
             },
-            actions: []
+            actions: {
+                default: []
+            }
         },
 
         data: function () {
