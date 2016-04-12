@@ -62,7 +62,7 @@
                 default: ''
             },
             actions: {
-                default: actionsDefault()
+                default: null
             }
         },
 
@@ -72,7 +72,7 @@
 
         computed: {
             hasActions() {
-                return this.actions.length > 0
+                return this.actions && this.actions.length > 0
             },
 
             visibleColumns() {
