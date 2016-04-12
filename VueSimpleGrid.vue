@@ -5,7 +5,7 @@
                <th v-for="column in visibleColumns" @click="sortBy(column)" :class="columnClass(column)" aria-label="sort">
                    {{ column.displayName }} <span v-if="isSorting(column)" :class="sortingClass(column)"></span>
                </th>
-               <th v-if="hasActions">
+               <th v-if="showActionMenu">
                    {{ actionsColumnHeading }}
                </th>
            </tr>
@@ -15,14 +15,16 @@
                    <span v-if="alreadyEscaped(column)">{{{ formatData(rowData[column.name], column) }}}</span>
                    <span v-if="!alreadyEscaped(column)">{{ formatData(rowData[column.name], column) }}</span>
                </td>
-               <td v-if="hasActions"  class="dropdown">
+               <td v-if="showActionMenu"  class="dropdown">
                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
                    </a>
                    <ul class="action-menu dropdown-menu pull-right" role="menu">
-                       <li v-for="action in actions">
-                           <a :href="getActionUrl(action, rowData)" @click="actionClicked(action, rowData)">
+                       <li v-for="action in rowActions(rowData)" :class="action.class">
+                           <a v-if="action.class == 'link'" :href="getActionUrl(action, rowData)">
                            {{ action.displayText }}</a>
+                           <a v-if="action.class == 'event'"  @click="actionClicked(action, rowData)">
+                               {{ action.displayText }}</a>
                        </li>
                    </ul>
                </td>
@@ -63,6 +65,9 @@
             },
             actions: {
                 default: null
+            },
+            showActionMenu: {
+                default: false
             }
         },
 
@@ -71,10 +76,6 @@
         },
 
         computed: {
-            hasActions() {
-                return this.actions && this.actions.length > 0
-            },
-
             visibleColumns() {
                 return this.columns.filter(function(column) {
                     return !column.hidden;
@@ -138,6 +139,12 @@
 
             isSorting(column) {
                 return column.name == this.sortColumn
+            },
+
+            rowActions(rowData) {
+                var fixed = this.actions ? this.action : []
+                var rowSpecific = this.rowData.actionMenu ? this.rowData.actionMenu : []
+                return fixed.concat(rowSpecific)
             },
 
             rowClicked(rowData) {

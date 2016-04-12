@@ -46,10 +46,14 @@ var vm = new Vue({
     data: {
         actions: [
             {
+                class: 'link',
                 displayText: 'URL test',
                 url: '/things/{key}/edit', // for each row, {key} is replaced by the rowData for the urlKey column 
                 urlKey: 'id'
             },{
+                class: 'divider'
+            },{
+                class: 'event',
                 displayText: 'Event test',
                 event: 'my-custom-event'
             }
