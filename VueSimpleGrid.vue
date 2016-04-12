@@ -62,7 +62,7 @@
                 default: ''
             },
             actions: {
-                default: []
+                default: actionsDefault()
             }
         },
 
@@ -87,6 +87,10 @@
                 if (action.event) {
                     this.$dispatch(action.event, rowData)
                 }
+            },
+
+            actionsDefault() {
+                return []
             },
 
             alreadyEscaped(column) {
