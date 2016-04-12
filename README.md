@@ -37,6 +37,7 @@ After installing the plugin you can use it like this
         :sort-dir.sync="sortDir"
         :actions="actions"
         actions-column-heading="Actions"
+        show-action-menu=true
 ></vue-simple-grid>
 ```
 
@@ -138,4 +139,7 @@ var vm = new Vue({
 
 You can share a common column definition:
 
+# Special data fields
 
+ - `actionMenu`
+ - `rowClass`

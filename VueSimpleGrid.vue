@@ -133,8 +133,8 @@
                     return '#'
             },
 
-            getRowClass(item) {
-                return 'clickable' // other classes might be apply by passing via props in future
+            getRowClass(rowData) {
+                return 'clickable' + (rowData.rowClass ? ' ' + rowData.rowClass : '')
             },
 
             isSorting(column) {
@@ -143,7 +143,7 @@
 
             rowActions(rowData) {
                 var fixed = this.actions ? this.action : []
-                var rowSpecific = this.rowData.actionMenu ? this.rowData.actionMenu : []
+                var rowSpecific = rowData.actionMenu ? rowData.actionMenu : []
                 return fixed.concat(rowSpecific)
             },
 
