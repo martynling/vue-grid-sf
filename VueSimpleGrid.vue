@@ -128,7 +128,11 @@
 
             getActionUrl(action, rowData) {
                 if (action.url)
-                    return action.url.replace("{key}", rowData[action.urlKey])
+                    if (action.urlKey){
+                        return action.url.replace("{key}", rowData[action.urlKey])
+                    } else {
+                        return action.url
+                    }
                 else
                     return '#'
             },
