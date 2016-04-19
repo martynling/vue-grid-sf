@@ -112,12 +112,15 @@
             formatData(rawValue, column) {
                 switch (column.dataType) {
                     case 'date':
-                        if (moment(rawValue, "YYYY-MM-DD HH:mm:ss").isValid()) {
-                            return moment(rawValue, "YYYY-MM-DD HH:mm:ss").format('ll')
-                        }
-                        return ''
+                        if (column.dataFormat)
+                            return Vue.filter('momentize')(rawValue, column.dataFormat)
+                        else
+                            return Vue.filter('momentize')(rawValue, 'll')
                     case 'datetime':
-                        return Vue.filter('momentize')(rawValue, 'lll')
+                        if (column.dataFormat)
+                            return Vue.filter('momentize')(rawValue, column.dataFormat)
+                        else
+                            return Vue.filter('momentize')(rawValue, 'lll')
                     case 'string':
                         if (column.dataFormat == 'paragraph')
                             return Vue.filter('nl2br')(Vue.filter('htmlEncode')(rawValue))
