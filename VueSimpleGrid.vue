@@ -141,8 +141,9 @@
                                 }
                             }
                             newValue = Vue.filter('nl2br')(Vue.filter('htmlEncode')(newValue))
+                            var popoverContent = Vue.filter('nl2br')(Vue.filter('htmlEncode')(rawValue))
                             if (expanding)
-                                newValue += ' <a href="#">' + column.expandableText + '</a>'
+                                newValue += ' <a data-toggle="popover" data-content="'+ popoverContent +'">' + column.expandableText + '</a>'
                         }
                         return newValue
                 }
