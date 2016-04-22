@@ -24,10 +24,7 @@
                    </ul>
                </td>
                <td v-for="column in visibleColumns" @click="cellClicked(rowData, column)">
-                   <span v-if="alreadyEscaped(column)">
-                       <span v-show="expanded[rowData.id] && expanded[rowData.id][column.name]">{{{ formatData(rowData, column, true) }}}</span>
-                       <span v-show="!expanded[rowData.id] || expanded[rowData.id][column.name]">{{{ formatData(rowData, column) }}}</span>
-                   </span>
+                   <span v-if="alreadyEscaped(column)">{{{ formatData(rowData, column) }}}</span>
                    <span v-if="!alreadyEscaped(column)">{{ formatData(rowData, column) }}</span>
                </td>
            </tr>
@@ -75,7 +72,6 @@
 
         data: function () {
             return {
-                expanded: {}
             };
         },
 
@@ -114,7 +110,7 @@
                 return column.notSortable ? '' : 'clickable'
             },
 
-            formatData(rowData, column, expanded = false) {
+            formatData(rowData, column) {
                 var rawValue = rowData[column.name]
                 switch (column.dataType) {
                     case 'date':
@@ -130,13 +126,9 @@
                     case 'string':
                         var newValue = rawValue
                         if (column.dataFormat == 'paragraph') {
-                            if (column.expandable && !expanded){
+                            if (column.expandable){
                                 if (newValue.length > column.expandableFrom){
                                     newValue = newValue.substring(0, column.expandableFrom)
-                                    if (typeof this.expanded[rowData.id] === 'undefined')
-                                        this.expanded[rowData.id] = {}
-                                    if (typeof this.expanded[rowData.id][column.name] === 'undefined')
-                                        this.expanded[rowData.id][column.name] = false
                                     var expanding = true
                                 }
                             }
