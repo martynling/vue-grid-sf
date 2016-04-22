@@ -24,9 +24,11 @@
                    </ul>
                </td>
                <td v-for="column in visibleColumns" @click="cellClicked(rowData, column)">
-                   <span v-if=""></span>
-                   <span v-if="alreadyEscaped(column)">{{{ formatData(rowData[column.name], column) }}}</span>
-                   <span v-if="!alreadyEscaped(column)">{{ formatData(rowData[column.name], column) }}</span>
+                   <span v-if="alreadyEscaped(column)">
+                       <span v-show="expanded[rowData.id] && expanded[rowData.id][column.name]">{{{ formatData(rowData, column, true) }}}</span>
+                       <span v-show="!expanded[rowData.id] || expanded[rowData.id][column.name]">{{{ formatData(rowData, column) }}}</span>
+                   </span>
+                   <span v-if="!alreadyEscaped(column)">{{ formatData(rowData, column) }}</span>
                </td>
            </tr>
        </table>
@@ -72,7 +74,9 @@
         },
 
         data: function () {
-            return {};
+            return {
+                expanded: {}
+            };
         },
 
         computed: {
@@ -99,6 +103,7 @@
             },
 
             cellClicked(rowData, column) {
+                this.expanded[rowData.id][column.name] = !this.expanded[rowData.id][column.name]
                 this.$dispatch('cell-clicked', {
                     rowData: rowData,
                     column: column
@@ -109,7 +114,8 @@
                 return column.notSortable ? '' : 'clickable'
             },
 
-            formatData(rawValue, column) {
+            formatData(rowData, column, expanded = false) {
+                var rawValue = rowData[column.name]
                 switch (column.dataType) {
                     case 'date':
                         if (column.dataFormat)
@@ -122,9 +128,23 @@
                         else
                             return Vue.filter('momentize')(rawValue, 'lll')
                     case 'string':
-                        if (column.dataFormat == 'paragraph')
-                            return Vue.filter('nl2br')(Vue.filter('htmlEncode')(rawValue))
-                        break
+                        var newValue = rawValue
+                        if (column.dataFormat == 'paragraph') {
+                            if (column.expandable && !expanded){
+                                if (newValue.length > column.expandableFrom){
+                                    newValue = newValue.substring(0, column.expandableFrom)
+                                    if (typeof this.expanded[rowData.id] === 'undefined')
+                                        this.expanded[rowData.id] = {}
+                                    if (typeof this.expanded[rowData.id][column.name] === 'undefined')
+                                        this.expanded[rowData.id][column.name] = false
+                                    var expanding = true
+                                }
+                            }
+                            newValue = Vue.filter('nl2br')(Vue.filter('htmlEncode')(newValue))
+                            if (expanding)
+                                newValue += ' <a href="#">' + column.expandableText + '</a>'
+                        }
+                        return newValue
                 }
                 return rawValue
             },

@@ -143,3 +143,7 @@ You can share a common column definition:
 
  - `actionMenu`
  - `rowClass`
+ 
+# dataFormat
+ - for string dataType, `paragraph` will HTML encode the text and convert newlines to line breaks.
+ - for date and datetime dataTypes, you can add a momentjs compatible format (otherwise date will default to `ll` and datetime will default to `lll`).
