@@ -99,7 +99,6 @@
             },
 
             cellClicked(rowData, column) {
-                this.expanded[rowData.id][column.name] = !this.expanded[rowData.id][column.name]
                 this.$dispatch('cell-clicked', {
                     rowData: rowData,
                     column: column
