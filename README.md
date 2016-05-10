@@ -1,14 +1,16 @@
 # vue-simple-grid
 A simple Vue.js grid component. Define the columns, bind the data and off you go. 
 
-Column headings are sortable by default, triggering an event. An action column with dropdown menu can also be defined with
-actions that are either links to other pages or triggers a custom event. A checkbox column for row selection
-and select all via the heading checkbox, also included.
+Column headings are sortable by default, triggering an event. 
+
+An action column with dropdown menu can also be defined with actions that are either links to other pages or triggers a custom event. 
+
+A checkbox column for row selection and select all via the heading checkbox, also included.
 
 # Requirements
 
 - Vue.js ^`1.0.0`
-- momentjs
+- momentjs ^`2.12.0`
 
 # Installation
 Assuming that you'll be using gulp or browserify to roll all your js into a single file:
@@ -161,6 +163,8 @@ var vm = new Vue({
 # Using with vue-filter-control
 
 You can share a common column definition:
+
+ - `expandable`
 
 # Special data fields
 
