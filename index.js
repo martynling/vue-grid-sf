@@ -1,3 +1,3 @@
-import VueSimpleGrid from './VueSimpleGrid.vue'
+import VueGridSf from './src/components/VueGridSf.vue'
 
-module.exports = VueSimpleGrid
+module.exports = VueGridSf

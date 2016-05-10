@@ -1,7 +1,10 @@
 <template>
-   <div class="vue-simple-grid">
+   <div class="vue-grid-sf">
        <table class="{{ tableClass }}">
            <tr>
+               <th v-if="showCheckboxSelection">
+                   <input type="checkbox" @change="toggleAll" v-model="allSelected" :class="allSelectedClass">
+               </th>
                <th v-if="showActionMenu">
                    {{ actionsColumnHeading }}
                </th>
@@ -10,6 +13,9 @@
                </th>
            </tr>
            <tr v-for="rowData in data" :class="getRowClass(rowData)"  @click="rowClicked(rowData)">
+               <td v-if="showCheckboxSelection">
+                   <input type="checkbox" @change="rowSelected(rowData)" :value="rowData[this.columnKey]" v-model="rowsSelected">
+               </td>
                <td v-if="showActionMenu"  class="dropdown">
                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
                        <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
@@ -37,6 +43,9 @@
         props: {
             columns: {
                 required: true,
+            },
+            columnKey: {
+                default: 'id'
             },
             data: {
                 required: true,
@@ -67,15 +76,27 @@
             },
             showActionMenu: {
                 default: false
+            },
+            showCheckboxSelection: {
+                default: false
+            },
+            rowsSelected: {
+                default: []
             }
         },
 
         data: function () {
             return {
+                allSelected: false,
+                allSelectedAmended: false
             };
         },
 
         computed: {
+            allSelectedClass() {
+                return this.allSelectedAmended ? 'select-all-amended' : ''
+            },
+
             visibleColumns() {
                 return this.columns.filter(function(column) {
                     return !column.hidden;
@@ -170,6 +191,19 @@
                 this.$dispatch('row-clicked', rowData)
             },
 
+            rowSelected(rowData) {
+                if (this.rowsSelected.length == 0){
+                    this.allSelectedAmended = false
+                    this.allSelected = false
+                } else if (this.rowsSelected.length == this.data.length){
+                    this.allSelectedAmended = false
+                } else {
+                    this.allSelectedAmended = true
+                    this.allSelected = true
+                }
+                this.$dispatch('row-selected', this.rowsSelected)
+            },
+
             sortBy(column) {
                 if (column.notSortable)
                         return false
@@ -195,6 +229,18 @@
                     }
                 }
                 return ''
+            },
+
+            toggleAll() {
+                this.rowsSelected = []
+                if (this.allSelected){
+                    this.data.forEach(function (el, i, ar) {
+                        var test = el[this.columnKey]
+                        this.rowsSelected.push(el[this.columnKey])
+                    }, this)
+                }
+                this.allSelectedAmended = false
+                this.$dispatch('row-selected', this.rowsSelected)
             }
         }
 
@@ -220,5 +266,9 @@
 
     .action-menu.dropdown-menu {
         top: 28px;
+    }
+
+    input.select-all-amended {
+        opacity: 0.5;
     }
 </style>
