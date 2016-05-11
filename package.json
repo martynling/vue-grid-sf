@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/martynling/vue-simple-grid.git"
+    "url": "https://github.com/martynling/vue-grid-sf.git"
   },
   "keywords": [
     "Vue",
@@ -30,7 +30,7 @@
   "author": "Martyn Ling",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/martynling/vue-simple-grid/issues"
+    "url": "https://github.com/martynling/vue-grid-sf/issues"
   },
   "dependencies": {
     "moment": "^2.12.0",
@@ -66,8 +66,12 @@
   },
   "browserify": {
     "transform": [
-        "babelify",
-        "vueify"
+      "babelify",
+      "vueify"
     ]
+  },
+  "homepage": "https://github.com/martynling/vue-simple-grid#readme",
+  "directories": {
+    "test": "test"
   }
 }
