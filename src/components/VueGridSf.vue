@@ -78,7 +78,7 @@
         default: 'asc'
       },
       tableClass: {
-        default: 'table table-striped table-responsive table-hover'
+        default: 'table table-striped table-responsive table-box table-hover'
       },
       sortAscClass: {
         default: 'glyphicon glyphicon-triangle-top'
@@ -289,4 +289,15 @@
   input.select-all-amended {
     opacity: 0.5;
   }
+
+  /* Add external table borders */
+  .table-box {
+    border-collapse: separate;
+    border: 1px solid #b7c7cf;
+  }
+
+  .table-box thead > tr > th {
+    border-bottom: 1px solid #d8e6ec;
+  }
+
 </style>
