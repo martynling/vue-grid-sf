@@ -27,6 +27,11 @@ Assuming that you'll be using gulp or browserify to roll all your js into a sing
 $ npm install vue-grid-sf --save-dev
 ```
 
+To make this work in my Laravel project, I needed to add the following to the devDependencies of that project:
+``` 
+"babel-preset-stage-2": "^6.1.18"
+```
+
 ## Build Setup
 
 ``` bash
