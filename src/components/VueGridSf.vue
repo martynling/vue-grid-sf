@@ -37,6 +37,7 @@
     </table>
   </div>
 </template>
+          notes: 'This text is short.',
 
 <script type="text/babel">
   var nl2br = function (text) {
@@ -56,6 +57,8 @@
     }
     return ''
   }
+
+  var ESAPI = require('node-esapi')
 
   export default {
     props: {
@@ -169,7 +172,7 @@
                 }
               }
               newValue = nl2br(htmlEncode(newValue))
-              var popoverContent = nl2br(htmlEncode(rawValue))
+              var popoverContent = ESAPI.encoder().encodeForHTMLAttribute((rawValue))
               if (expanding) {
                 newValue += ' <a data-toggle="popover" data-content="' + popoverContent + '">' + this.getExpander(column) + '</a>'
               }

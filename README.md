@@ -11,6 +11,7 @@ An optional checkbox column for multiple row selection and select all.
 
 - Vue.js ^`1.0.0`
 - momentjs ^`2.12.0`
+- node-esapi ^`0.0.1`
 
 ## Optional
 

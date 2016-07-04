@@ -57,7 +57,7 @@ export default {
       users: [
         {id: 1, email: 'fred@bloggs.com', first_name: 'Fred', last_name: 'Bloggs', role_id: 1,
           roleTitle: 'Admin', joined: '2015-08-21', last_login: '2016-05-09 12:31:53',
-          notes: 'This text is longer than 20 characters, so will be truncated but expandable.',
+          notes: 'This text is longer than <a href="str8-4ward.com">20 characters</a>, so will be truncated but expandable.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -65,6 +65,7 @@ export default {
         }, {
           id: 2, email: 'fredrika@bloggs.com', first_name: 'Fredrika', last_name: 'Bloggs',
           role_id: 2, roleTitle: 'Owner', joined: '2016-05-08', last_login: '2016-05-10 09:12:11',
+          notes: 'This text is short.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -72,6 +73,7 @@ export default {
         }, {
           id: 3, email: 'jeff@smith.com', first_name: 'Jeff', last_name: 'Smith', role_id: 3,
           roleTitle: 'Customer',
+          notes: 'This text is short.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -104,7 +106,7 @@ export default {
   created () {
     this.$nextTick(function () {
       $('[data-toggle="popover"]').popover(
-        {container: 'body', html: true, placement: 'auto bottom', trigger: 'hover click'}
+        {container: 'body', html: false, placement: 'auto bottom', trigger: 'hover click'}
       )
     })
   },
