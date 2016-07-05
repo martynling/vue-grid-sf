@@ -57,7 +57,7 @@ export default {
       users: [
         {id: 1, email: 'fred@bloggs.com', first_name: 'Fred', last_name: 'Bloggs', role_id: 1,
           roleTitle: 'Admin', joined: '2015-08-21', last_login: '2016-05-09 12:31:53',
-          notes: 'This text is longer than <a href="str8-4ward.com">20 characters</a>, so will be truncated but expandable.',
+          notes: 'This text is longer than <a href="str8-4ward.com">30 characters</a>, so will be truncated but expandable.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -65,22 +65,24 @@ export default {
         }, {
           id: 2, email: 'fredrika@bloggs.com', first_name: 'Fredrika', last_name: 'Bloggs',
           role_id: 2, roleTitle: 'Owner', joined: '2016-05-08', last_login: '2016-05-10 09:12:11',
-          notes: 'This text is short.',
+          notes: '<a onclick="alert()">Test</a> that javascript is escaped.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
           ]
         }, {
-          id: 3, email: 'jeff@smith.com', first_name: 'Jeff', last_name: 'Smith', role_id: 3,
+          id: 3, email: 'jeff@smith.com', first_name: 'Jeff', last_name: '<script>alert("Smith")', role_id: 3,
           roleTitle: 'Customer',
-          notes: 'This text is short.',
+          notes: '<script>alert("B")',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
           ]
         }, {
-          id: 4, email: 'jack@jones.com', first_name: 'Jack', last_name: 'Jones', role_id: 4,
+          id: 4, email: 'jack@jones.com', first_name: '<a onclick="alert()">Jack</a>', last_name: 'Jones', role_id: 4,
           roleTitle: 'Supplier',
+          notes: 'This should\r\n'
+          + 'be multi-line text.',
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -159,7 +161,7 @@ export default {
           dataType: 'string',
           dataFormat: 'paragraph',
           expandable: true,
-          expandableFrom: 20
+          expandableFrom: 30
         }
       ]
     },
@@ -195,4 +197,5 @@ export default {
 body {
   font-family: Helvetica, sans-serif;
 }
+
 </style>

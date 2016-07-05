@@ -37,11 +37,10 @@
     </table>
   </div>
 </template>
-          notes: 'This text is short.',
 
 <script type="text/babel">
   var nl2br = function (text) {
-    return text.replace(/(?:\r\n|\r|\n)/g, '<br>')
+    return text.replace(/(?:\r\n|\r|\n|&#xd;&#xa;|&#xd;|&#xa;)/g, '<br>')
   }
 
   var htmlEncode = function (html) {
@@ -167,12 +166,12 @@
             if (newValue && column.dataFormat === 'paragraph') {
               if (column.expandable) {
                 if (newValue.length > column.expandableFrom) {
-                  newValue = newValue.substring(0, column.expandableFrom)
+                  newValue = newValue.substring(0, column.expandableFrom - 1)
                   var expanding = true
                 }
               }
-              newValue = nl2br(htmlEncode(newValue))
-              var popoverContent = ESAPI.encoder().encodeForHTMLAttribute((rawValue))
+              newValue = nl2br(ESAPI.encoder().encodeForHTML(newValue))
+              var popoverContent = ESAPI.encoder().encodeForHTML((rawValue))
               if (expanding) {
                 newValue += ' <a data-toggle="popover" data-content="' + popoverContent + '">' + this.getExpander(column) + '</a>'
               }
@@ -303,4 +302,7 @@
     border-bottom: 1px solid #d8e6ec;
   }
 
+  .popover {
+    white-space: pre-line;
+  }
 </style>

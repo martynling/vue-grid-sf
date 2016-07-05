@@ -292,10 +292,12 @@ You will also need to run this code every time that new data populates the grid 
 ``` javascript
 this.$nextTick(function () {
   $('[data-toggle="popover"]').popover(
-    {container: 'body', html: true, placement: 'auto bottom', trigger: 'hover click'}
+    {container: 'body', html: false, placement: 'auto bottom', trigger: 'hover click'}
   )
 })
 ```
+
+NOTE: the `html` option should be set to false unless you are absolutely sure that the popover content is safe from XSS.  
 
 ### Using with vue-filter-control
 
