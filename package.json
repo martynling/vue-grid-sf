@@ -1,7 +1,7 @@
 {
   "name": "vue-grid-sf",
   "description": "A rather handy grid UI component for Vue.js. Define the columns, bind the data and off you go. Column headings are sortable by default, triggering an event.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "./index.js",
   "scripts": {
     "watchify": "watchify -vd -p browserify-hmr -e src/main.js -o dist/build.js",
