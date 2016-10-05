@@ -260,7 +260,7 @@ var vm = new Vue({
 
  - `name` - the attribute in the `data` property that contains the data to be displayed in the column
  - `displayName` - the column heading
- - `dataType` - the column's dataType - currently supports `string`, `number`, `date`, `datetime` and `choice` (`choice` is more relevant to `vue-filter-control`)
+ - `dataType` - the column's dataType - currently supports `string`, `number`, `date`, `datetime`, `choice` (`choice` is more relevant to `vue-filter-control`) and `html` (only use if you know your content is safe to display).
 
 ### Optional
 

@@ -58,6 +58,7 @@ export default {
         {id: 1, email: 'fred@bloggs.com', first_name: 'Fred', last_name: 'Bloggs', role_id: 1,
           roleTitle: 'Admin', joined: '2015-08-21', last_login: '2016-05-09 12:31:53',
           notes: 'This text is longer than <a href="str8-4ward.com">30 characters</a>, so will be truncated but expandable.',
+          html_field: "<ul><li>This is HTML text that should be displayed in the grid</li><li>but truncated and then displayed as HTML in the popover as long as long as html is set to true on the jQuery popover call.</li></ul>",
           actionMenu: [
               {class: 'link', displayText: 'URL link', url: '/not-a-page/{key}', urlKey: 'id'},
               {class: 'event', displayText: 'Event', event: 'action-menu-event'}
@@ -159,6 +160,13 @@ export default {
           name: 'notes',
           displayName: 'Notes',
           dataType: 'string',
+          dataFormat: 'paragraph',
+          expandable: true,
+          expandableFrom: 30
+        }, {
+          name: 'html_field',
+          displayName: 'Html Field',
+          dataType: 'html',
           dataFormat: 'paragraph',
           expandable: true,
           expandableFrom: 30

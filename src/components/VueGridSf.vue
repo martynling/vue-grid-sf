@@ -177,6 +177,20 @@
               }
             }
             return newValue
+          case 'html':
+            var newValue = rawValue
+            if (newValue && column.dataFormat === 'paragraph') {
+              if (column.expandable) {
+                if (newValue.length > column.expandableFrom) {
+                  newValue = newValue.substring(0, column.expandableFrom - 1)
+                  var expanding = true
+                }
+              }
+              if (expanding) {
+                newValue += ' <a data-toggle="popover" data-content="' + rawValue + '">' + this.getExpander(column) + '</a>'
+              }
+            }
+            return newValue
         }
         return rawValue
       },
