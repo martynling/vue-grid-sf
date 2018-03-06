@@ -1,7 +1,7 @@
 {
   "name": "vue-grid-sf",
   "description": "A rather handy grid UI component for Vue.js. Define the columns, bind the data and off you go. Column headings are sortable by default, triggering an event.",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "main": "./index.js",
   "scripts": {
     "watchify": "watchify -vd -p browserify-hmr -e src/main.js -o dist/build.js",
@@ -35,7 +35,7 @@
   "dependencies": {
     "moment": "^2.12.0",
     "node-esapi": "^0.0.1",
-    "vue": "^1.0.0"
+    "vue": "^2.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.0.0",
@@ -47,8 +47,9 @@
     "browserify": "^12.0.1",
     "browserify-hmr": "^0.3.1",
     "cross-env": "^1.0.5",
-    "eslint": "^1.10.3",
+    "eslint": "^3.9.0",
     "eslint-plugin-html": "^1.1.0",
+    "eslint-plugin-vue": "^4.3.0",
     "http-server": "^0.9.0",
     "jasmine-core": "^2.4.1",
     "karma": "^0.13.15",
@@ -60,8 +61,8 @@
     "phantomjs-prebuilt": "^2.1.3",
     "proxyquireify": "^3.0.1",
     "uglify-js": "^2.5.0",
-    "vue-hot-reload-api": "^1.2.2",
-    "vueify": "^8.0.0",
+    "vue-hot-reload-api": "^2.3.0",
+    "vueify": "^9.4.1",
     "vueify-insert-css": "^1.0.0",
     "watchify": "^3.4.0"
   },

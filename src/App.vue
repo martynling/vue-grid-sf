@@ -1,9 +1,16 @@
 <template>
   <div id="app">
-    <hello></hello>
+    <hello />
     <div class="btn-group">
-      <button :disabled="noneSelected" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Bulk Action <span class="caret"></span>
+      <button
+        :disabled="noneSelected"
+        type="button"
+        class="btn btn-default dropdown-toggle"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+      >
+        Bulk Action <span class="caret"></span>
       </button>
       <ul class="dropdown-menu">
         <li><a href="#">Action</a></li>
@@ -14,17 +21,19 @@
       </ul>
     </div>
     <vue-grid-sf
-      @sort-order-changed="fetchUsers"
-      @action-menu-event="handleThisActionMenuEvent"
-      :columns="columns"
-      :data.sync="users"
-      :sort-column.sync="sortColumn"
-      :sort-dir.sync="sortDir"
-      :rows-selected.sync="rowsSelected"
+      v-on:sort-order-changed="handleSortColumnChanged"
+      v-on:action-menu-event="handleThisActionMenuEvent"
+      v-on:row-clicked="handleRowClicked"
+      v-on:row-selected="handleRowSelected"
+      v-on:cell-clicked="handleCellClicked"
+      v-bind:columns="columns"
+      v-bind:data="users"
+      v-bind:sort-column="sortColumn"
+      v-bind:sort-dir="sortDir"
       show-action-menu=true
       show-checkbox-selection=true
       table-class="table table-striped table-responsive table-box table-hover"
-    ></vue-grid-sf>
+     />
   </div>
 </template>
 
@@ -33,9 +42,9 @@
 import Hello from './components/Hello.vue'
 import VueGridSf from './components/VueGridSf.vue'
 
-var moment = require('moment')
+const moment = require('moment')
 
-var sort_by = function (field, reverse, primer) {
+let sort_by = function (field, reverse, primer) {
   var key = primer ? function (x) {return primer(x[field])} : function (x) {return x[field]}
   reverse = !reverse ? 1 : -1
 
@@ -55,7 +64,8 @@ export default {
     return {
       user: null,
       users: [
-        {id: 1, email: 'fred@bloggs.com', first_name: 'Fred', last_name: 'Bloggs', role_id: 1,
+        {
+          id: 1, email: 'fred@bloggs.com', first_name: 'Fred', last_name: 'Bloggs', role_id: 1,
           roleTitle: 'Admin', joined: '2015-08-21', last_login: '2016-05-09 12:31:53',
           notes: 'This text is longer than <a href="str8-4ward.com">30 characters</a>, so will be truncated but expandable.',
           html_field: "<ul><li>This is HTML text that should be displayed in the grid</li><li>but truncated and then displayed as HTML in the popover as long as long as html is set to true on the jQuery popover call.</li></ul><p>&lt;a href='onclick=alert(\'No\')'&gt;Click again&lt;/a&gt;</p>",
@@ -111,7 +121,7 @@ export default {
       $('[data-toggle="popover"]').popover(
         {container: 'body', html: false, placement: 'auto bottom', trigger: 'hover click'}
       )
-    })
+    }, this)
   },
 
   computed: {
@@ -194,8 +204,24 @@ export default {
           this.users.sort(sort_by(this.sortColumn, (this.sortDir === 'desc'), function (a) {return ('' + a).toUpperCase()}))
       }
     },
-    handleThisActionMenuEvent (ev) {
-      alert('User with email ' + ev.email + ' chosen')
+    handleSortColumnChanged (e) {
+      console.log (`New sorting criteria: ${e.column} ${e.dir}`)
+      this.sortColumn = e.column;
+      this.sortDir = e.dir;
+      this.fetchUsers();
+    },
+    handleCellClicked (e) {
+      console.log(`Cell clicked: ${JSON.stringify(e.rowData)} and column: ${JSON.stringify(e.column)}`)
+    },
+    handleRowClicked (rowData) {
+      console.log(`Row clicked: ${JSON.stringify(rowData)}`)
+    },
+    handleRowSelected (rows) {
+      this.rowsSelected = rows;
+      console.log(`Rows selected: ${JSON.stringify(rows)}`)
+    },
+    handleThisActionMenuEvent (rowData) {
+      console.log(`User with email ${rowData.email} chosen. All data: ${JSON.stringify(rowData)}`)
     }
   }
 }
