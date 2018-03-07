@@ -1,6 +1,6 @@
 {
   "plugins": [
-    "html"
+    "vue"
   ],
 
   "env": {
@@ -86,7 +86,7 @@
     "no-extra-bind": 2,
     "no-extra-boolean-cast": 2,
     "no-extra-parens": 0,
-    "no-extra-semi": 0,
+    "no-extra-semi": 1,
     "no-fallthrough": 2,
     "no-floating-decimal": 2,
     "no-func-assign": 2,
@@ -162,8 +162,8 @@
     "quote-props": 0,
     "quotes": [2, "single", "avoid-escape"],
     "radix": 2,
-    "semi": [2, "never"],
-    "semi-spacing": 0,
+    "semi": ["error", "always"],
+    "semi-spacing": ["error", {"before": false, "after": true}],
     "sort-vars": 0,
     "space-after-keywords": [2, "always"],
     "space-before-blocks": [2, "always"],

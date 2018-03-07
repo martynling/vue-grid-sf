@@ -1,5 +1,5 @@
 # vue-grid-sf
-A rather handy grid UI component for Vue.js. Define the columns, bind the data and off you go. 
+A rather handy grid UI component for Vue.js. Define the columns, bind the data, handle the events and off you go. 
 
 Column headings are sortable by default, triggering an event. 
 
@@ -9,7 +9,7 @@ An optional checkbox column for multiple row selection and select all.
 
 # Requirements
 
-- Vue.js ^`1.0.0`
+- Vue.js ^`2.0.0`
 - momentjs ^`2.12.0`
 - node-esapi ^`0.0.1`
 
@@ -38,7 +38,10 @@ To make this work in my Laravel project, I needed to add the following to the de
 ``` bash
 # install dependencies
 npm install
+```
 
+A simple demo app is available at localhost:8080/demo
+``` bash
 # serve with hot reload at localhost:8080
 npm run dev
 
@@ -54,10 +57,19 @@ npm test
 
 For more information see the [docs for vueify](https://github.com/vuejs/vueify).
 
+# Upgrade from v0.0 to v1.0
+
+`vue-grid-sf` has been upgraded to work with Vue 2.0. Vue 2.0 does not support two-way binding of properties. Instead any changes to bound properties are passed back via events. The following component properties are affected by this change:
+
+ - data
+ - sort-column
+ - sort-dir
+ - rows-selected (this property been deprecated as row selections are handled entirely via events)
+
 # Usage
 
 ```javascript
-var Vue = require('vue');
+let Vue = require('vue');
 import VueGridSf from 'vue-grid-sf'
 Vue.component('vue-grid-sf', VueGridSf)
 ```
@@ -68,9 +80,9 @@ After installing the plugin you can use it like this:
 
 ```html
 <vue-grid-sf
-        @sort-order-changed="fetchData"
-        :columns="columns"
-        :data.sync="myData"
+        v-on:sort-order-changed="handleSortOrderChanged"
+        v-bind:columns="columns"
+        v-bind:data="myData"
 ></vue-grid-sf>
 ```
 
@@ -113,14 +125,21 @@ var vm = new Vue({
                 notFilterable: true // Don't include in list of columns that can be used for filtering (if vue-filter-control is sharing the columns data)
             }
         ],
-        myData: [] 
+        myData: [],
+        sortColumn: null,
+        sortDir: null
     },
     
     methods: {
         fetchData() {
             // Your AJAX or other code to display the data based on the new sort order
             this.MyData = [] // data fetched via AJAX or otherwise imported/sorted
-        }
+        },
+        handleSortColumnChanged (e) {
+            this.sortColumn = e.column;
+            this.sortDir = e.dir;
+            this.fetchData();
+        },
     }
 });
 ```
@@ -131,16 +150,16 @@ If you want to make use of all of the features of vue-grid-sf:
 
 ```html
 <vue-grid-sf
-        @cell-clicked="cellClicked"
-        @row-clicked="rowClicked"
-        @sort-order-changed="fetchData"
-        @my-custom-event="handleMyCustomEvent"
-        :columns="columns"
-        :data.sync="myData"
-        :sort-column.sync="sortColumnName"
-        :sort-dir.sync="sortDir"
-        :rows-selected.sync="rowsSelected"        
-        :actions="actions"
+        v-on:cell-clicked="handleCellClicked"
+        v-on:row-clicked="handleRowClicked"
+        v-on:row-selected="handleRowSelected"
+        v-on:sort-order-changed="handleSortOrderChanged"
+        v-on:my-custom-event="handleMyCustomEvent"
+        v-bind:columns="columns"
+        v-bind:data="myData"
+        v-bind:sort-column="sortColumn"
+        v-bind:sort-dir="sortDir"
+        v-bind:actions="actions"
         actions-column-heading="Actions"
         show-action-menu=true
         show-checkbox-selection=true
@@ -192,7 +211,7 @@ var vm = new Vue({
                     // ...more languages
                 ],
                 maxItems: 10,
-                hidden: true // Don't display in table (might be used for filtering)
+                hidden: true // Don't display in vue-grid-sf (column might be used by vue-filter-control for filtering)
             }, {
                 name: languages_spoken_display_name,
                 displayName: 'Languages Spoken Fluently',
@@ -201,34 +220,45 @@ var vm = new Vue({
             }
         ],
         myData: [],  
-        rowsSelected: [],
-        sortColumnName: 'id', // How the initial data is sorted (can be left blank)
+        sortColumn: 'id', // How the initial data is sorted (can be left blank)
         sortDir: 'asc'
     },
     
     methods: {
-        cellClicked(e) { // Object e has rowData and column properties
-            if (e.column.name == 'something-special') {
-                // do something special
-            } else {
-                // do something else
-            }
-        },
-
         fetchData() {
             // Your AJAX or other code to display the data based on the new sort order
             // Set myData, which is bound to vue-grid-sf's data property with data fetched via AJAX or otherwise imported/sorted
             this.myData = [] 
         },
         
-        handleMyCustomEvent(e) { 
-            // Object e has a property named rowData, which is the data for the row that triggered the event
-            alert('Event triggered for row with id #' + e.rowData.id)           
+        handleCellClicked(e) { // Object e has rowData and column properties
+            if (e.column.name === 'something-special') {
+                // do something special
+            } else {
+                // do something else, perhaps with e.rowData
+                
+            }
+        },
+
+        handleMyCustomEvent(rowData) { 
+            // rowData for the row that triggered the event
+            alert('Event triggered for row with id #' + rowData.id)           
         },
         
-        rowClicked(rowData) {
+        handleRowClicked(rowData) {
         
         },
+
+        handleRowSelected(rows) {
+        
+        },
+        
+        handleSortColumnChanged (e) {
+            this.sortColumn = e.column;
+            this.sortDir = e.dir;
+            this.fetchData();
+        },
+
     }
 });
 ```
@@ -243,7 +273,7 @@ var vm = new Vue({
 ## Optional
 
 - `column-key` - the name of the column that contains a unique key for the data. Used by row selection functionality. Defaults to `id`.
-- `sort-column` - the column that the data is sorted by (not the grid does not do the sorting, you provide sorted data). Defaults to `''`.
+- `sort-column` - the column that the data is sorted by (**Note:** the grid does not do the sorting, you provide sorted data). Defaults to `''`.
 - `sort-dir` - the direction that the data in sortColumn, either `'asc'` or `'desc'`. Defaults to `'asc'`.
 - `table-class` - CSS class applied to table. Defaults to `'table table-striped table-responsive table-box table-hover'`.
 - `sort-asc-class` - CSS class applied to ascending sort. Defaults to `'glyphicon glyphicon-triangle-top'`.
@@ -252,7 +282,6 @@ var vm = new Vue({
 - `actions` - array of actions to be added to action menu for every row in the grid. Defaults to `null`.
 - `actions-column-heading` - Column heading for the actions menu defaults to `''`
 - `show-checkbox-selection` - determines whether a column should be shown that enables multiple selection of rows. Defaults to `false`.
-- `rows-selected` - an array of `column-key` values identifying the selected rows in the grid. Defaults to `[]`.
 
 ## Columns definition
 
@@ -287,7 +316,7 @@ To do this for the column:
 * Set `expandableFrom` to the number of characters that you want displayed in the grid.
 * Set `expandableText` to provide a hoverable, clickable text to trigger the popover displaying the full text. Defaults to `'(...)'`.
 
-You will also need to run this code every time that new data populates the grid (not if the current data is only re-sorted though):
+You will also need to run this code every time that new data populates the grid:
 
 ``` javascript
 this.$nextTick(function () {
@@ -303,7 +332,7 @@ NOTE: the `html` option should be set to false unless you are absolutely sure th
 
 You can share a common `columns` definition between `vue-grid-sf` and `vue-filter-control` since many of the column configurations will be the same for the grid and the filter.  
 
-However, there will be some filter columns that you would want to be shown in the grid. In these cases, set:
+However, there will be some filter columns that you wouldn't want to be shown in the grid. In these cases, set:
 
 ```
  hidden: true
@@ -323,7 +352,7 @@ and some columns you may want to be listed in the grid, but you wouldn't want th
 
 Adding an action menu to the grid is made possible via some action specific properties and also via `data` property:
 
-Setting `show-action-menu` to true will display an action menu column on the left side of the grid. 
+Setting `show-action-menu` to true will display an action menu column on the left side of the grid.
 
 Setting the `actions` property to an array of actions will fill the action menu with these actions for every row in the grid.
   
@@ -343,22 +372,24 @@ actions: [
     }, {
         class: 'event',
         displayText: 'Event test',
-        event: 'my-custom-event'
+        event: 'my-custom-event' 
+        // Note: you need to add v-on:my-custom-event={yourHandler} to the <vue-grid-sf> component
+        //  The event handler will be passed the rowData
     }
 ],
 ```
 
 ## Row Selection
 
-Adding the ability to select multiple or all rows in the grid is as simple as setting `show-checkbox-selection` to true and binding an array to the `rows-selected` property. 
+Adding the ability to select multiple or all rows in the grid is as simple as setting `show-checkbox-selection` to true. 
  
-You can even, or alternatively, listen out for a `row-selected` event if you want.
+Listen out for a `row-selected` event to do something with the selected rows, such as bulk actions.
  
 # Events
 
  - `cell-clicked` - object passed has `rowData` and `column` properties
  - `row-clicked` - object passed is `rowData`
  - `sort-order-changed` - object passed has `column` (the column name) and `dir` (set to either `'asc'` or `'desc'`) properties.
- - `row-selected` - object passed is an array of unique keys (defined by `column-key` property) for the rows selected in the grid.
- - custom events as defined in the `actions` property and/or within the `actionMenu` data field in the data provided to the `data` property. Object passed has the event name (defined as `event` in the action definition) and rowData properties.
+ - `row-selected` - an array of rowData is passed for the selected rows.
+ - custom events as defined in the `actions` property and/or within the `actionMenu` data field in the data provided to the `data` property. Passed rowData.
 

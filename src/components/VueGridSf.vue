@@ -1,63 +1,93 @@
 <template>
   <div class="vue-grid-sf">
-    <table class="{{ tableClass }}">
+    <table v-bind:class="tableClass">
+      <tbody>
       <tr>
         <th v-if="showCheckboxSelection">
-         <input type="checkbox" @change="toggleAll" v-model="allSelected" :class="allSelectedClass">
+         <input type="checkbox"
+                v-on:change="toggleAll"
+                v-model="allSelected"
+         >
         </th>
         <th v-if="showActionMenu">
          {{ actionsColumnHeading }}
         </th>
-        <th v-for="column in visibleColumns" @click="sortBy(column)" :class="columnClass(column)" aria-label="sort">
-         {{ column.displayName }} <span v-if="isSorting(column)" :class="sortingClass(column)"></span>
+        <th v-for="column in visibleColumns"
+            v-bind:key="column.name"
+            v-on:click="sortBy(column)"
+            v-bind:class="columnClass(column)"
+            aria-label="sort"
+        >
+         {{ column.displayName }} <span v-if="isSorting(column)" v-bind:class="sortingClass(column)"></span>
         </th>
       </tr>
-      <tr v-for="rowData in data" :class="getRowClass(rowData)"  @click="rowClicked(rowData)">
+      <tr v-for="rowData in processedData"
+          v-bind:key="rowData[this.sortColumn]"
+          v-bind:class="getRowClass(rowData)"
+          v-on:click="rowClicked(rowData)"
+      >
         <td v-if="showCheckboxSelection">
-         <input type="checkbox" @change="rowSelected(rowData)" :value="rowData[this.columnKey]" v-model="rowsSelected">
+          <input type="checkbox"
+                v-on:change="rowSelected(rowData)"
+                v-bind:value="rowData[this.columnKey]"
+                v-model="rowData.vgsfSelected"
+          >
         </td>
         <td v-if="showActionMenu"  class="dropdown">
           <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
              <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
           </a>
           <ul class="action-menu dropdown-menu" role="menu">
-            <li v-for="action in rowActions(rowData)" :class="action.class">
-              <a v-if="action.class == 'link'" :href="getActionUrl(action, rowData)">
-               {{ action.displayText }}</a>
-              <a v-if="action.class == 'event'"  @click="actionClicked(action, rowData)">
-               {{ action.displayText }}</a>
+            <li v-for="action in rowActions(rowData)"
+                v-bind:key="action.displayText"
+                v-bind:class="action.class"
+            >
+              <a v-if="action.class == 'link'"
+                 v-bind:href="getActionUrl(action, rowData)"
+              >
+               {{ action.displayText }}
+              </a>
+              <a v-if="action.class == 'event'"
+                 v-on:click="actionClicked(action, rowData)"
+              >
+               {{ action.displayText }}
+              </a>
             </li>
           </ul>
         </td>
-        <td v-for="column in visibleColumns" @click="cellClicked(rowData, column)">
-          <span v-if="alreadyEscaped(column)">{{{ formatData(rowData, column) }}}</span>
+        <td v-for="column in visibleColumns"
+            v-bind:key="column.name"
+            v-on:click="cellClicked(rowData, column)"
+        >
+          <span v-if="alreadyEscaped(column)" v-html="formatData(rowData, column)"> </span>
           <span v-if="!alreadyEscaped(column)">{{ formatData(rowData, column) }}</span>
         </td>
       </tr>
+      </tbody>
     </table>
   </div>
 </template>
 
 <script type="text/babel">
-  var nl2br = function (text) {
+  const nl2br = function (text) {
     return text.replace(/(?:\r\n|\r|\n|&#xd;&#xa;|&#xd;|&#xa;)/g, '<br>')
   }
 
-  var htmlEncode = function (html) {
-    var txt = document.createElement('textarea')
+  const htmlEncode = function (html) {
+    let txt = document.createElement('textarea')
     txt.innerHTML = html
     return txt.value
   }
 
-  var moment = require('moment')
-  var momentize = function (date, outputFormat) {
+  const moment = require('moment')
+  const momentize = function (date, outputFormat) {
     if (moment(date, 'YYYY-MM-DD HH:mm:ss').isValid()) {
       return moment(date, 'YYYY-MM-DD HH:mm:ss').format(outputFormat)
     }
     return ''
   }
 
-  var ESAPI = require('node-esapi')
+  const ESAPI = require('node-esapi')
 
   export default {
     props: {
@@ -69,14 +99,11 @@
       },
       data: {
         required: true,
-        twoWay: true
       },
       sortColumn: {
-        twoWay: true,
         default: ''
       },
       sortDir: {
-        twoWay: true,
         default: 'asc'
       },
       tableClass: {
@@ -99,22 +126,22 @@
       },
       showCheckboxSelection: {
         default: false
-      },
-      rowsSelected: {
-        default: []
       }
     },
 
     data: function () {
       return {
-        allSelected: false,
-        allSelectedAmended: false
+        allSelected: false
       }
     },
 
     computed: {
-      allSelectedClass () {
-        return this.allSelectedAmended ? 'select-all-amended' : ''
+      // Add in an extra data attribute to enable management of row selections.
+      // Using `vgsfSelected` property name to ensure a name clash with a real data attribute unlikely.
+      processedData () {
+        let processedData = this.data;
+        processedData.forEach(function(obj) { obj.vgsfSelected = false; });
+        return processedData;
       },
 
       visibleColumns () {
@@ -127,7 +154,7 @@
     methods: {
       actionClicked (action, rowData) {
         if (action.event) {
-          this.$dispatch(action.event, rowData)
+          this.$emit(action.event, rowData)
         }
       },
 
@@ -140,7 +167,7 @@
       },
 
       cellClicked (rowData, column) {
-        this.$dispatch('cell-clicked', {
+        this.$emit('cell-clicked', {
           rowData: rowData,
           column: column
         })
@@ -151,7 +178,9 @@
       },
 
       formatData (rowData, column) {
-        var rawValue = rowData[column.name]
+        let rawValue = rowData[column.name]
+        let newValue = rawValue
+        let expanding = false
         switch (column.dataType) {
           case 'date':
             if (column.dataFormat) return momentize(rawValue, column.dataFormat)
@@ -162,28 +191,26 @@
             else return momentize(rawValue, 'lll')
             break
           case 'string':
-            var newValue = rawValue
             if (newValue && column.dataFormat === 'paragraph') {
               if (column.expandable) {
                 if (newValue.length > column.expandableFrom) {
                   newValue = newValue.substring(0, column.expandableFrom - 1)
-                  var expanding = true
+                  expanding = true
                 }
               }
               newValue = nl2br(ESAPI.encoder().encodeForHTML(newValue))
-              var popoverContent = ESAPI.encoder().encodeForHTML((rawValue))
+              let popoverContent = ESAPI.encoder().encodeForHTML((rawValue))
               if (expanding) {
                 newValue += ' <a data-toggle="popover" data-content="' + popoverContent + '">' + this.getExpander(column) + '</a>'
               }
             }
             return newValue
           case 'html':
-            var newValue = rawValue
             if (newValue && column.dataFormat === 'paragraph') {
               if (column.expandable) {
                 if (newValue.length > column.expandableFrom) {
                   newValue = newValue.substring(0, column.expandableFrom - 1)
-                  var expanding = true
+                  expanding = true
                 }
               }
               if (expanding) {
@@ -218,40 +245,36 @@
       },
 
       rowActions (rowData) {
-        var fixed = this.actions ? this.action : []
-        var rowSpecific = rowData.actionMenu ? rowData.actionMenu : []
+        let fixed = this.actions ? this.action : []
+        let rowSpecific = rowData.actionMenu ? rowData.actionMenu : []
         return fixed.concat(rowSpecific)
       },
 
       rowClicked (rowData) {
-        this.$dispatch('row-clicked', rowData)
+        this.$emit('row-clicked', rowData)
       },
 
       rowSelected (rowData) {
-        if (this.rowsSelected.length === 0) {
-          this.allSelectedAmended = false
-          this.allSelected = false
-        } else if (this.rowsSelected.length === this.data.length) {
-          this.allSelectedAmended = false
-        } else {
-          this.allSelectedAmended = true
-          this.allSelected = true
-        }
-        this.$dispatch('row-selected', this.rowsSelected)
+        let selectedRows = this.processedData.filter( function (rowData) {
+          return rowData.vgsfSelected;
+        })
+        this.allSelected = (selectedRows.length === this.data.length);
+        this.$emit('row-selected', selectedRows)
       },
 
       sortBy (column) {
         if (column.notSortable) return false
+        let newCol = column.name
+        let newDir = null
 
         if (column.name === this.sortColumn) {
-          this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc'
+          newDir = this.sortDir === 'asc' ? 'desc' : 'asc'
         } else {
-          this.sortColumn = column.name
-          this.sortDir = 'asc'
+          newDir = 'asc'
         }
-        this.$dispatch('sort-order-changed', {
-          'column': this.sortColumn,
-          'dir': this.sortDir
+        this.$emit('sort-order-changed', {
+          'column': newCol,
+          'dir': newDir
         })
       },
 
@@ -267,14 +290,13 @@
       },
 
       toggleAll () {
-        this.rowsSelected = []
-        if (this.allSelected) {
-          this.data.forEach(function (el, i, ar) {
-            this.rowsSelected.push(el[this.columnKey])
-          }, this)
-        }
-        this.allSelectedAmended = false
-        this.$dispatch('row-selected', this.rowsSelected)
+        this.processedData.forEach(function (obj) {
+          obj.vgsfSelected = this.allSelected
+        }, this)
+        let selectedRows = this.processedData.filter( function (rowData) {
+          return rowData.vgsfSelected;
+        })
+        this.$emit('row-selected', selectedRows)
       }
     }
 
